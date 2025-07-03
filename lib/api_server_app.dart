@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_api_gui/pages/home_page.dart';
 import 'theme.dart';
 
 class ApiServerApp extends StatelessWidget {
@@ -12,7 +13,7 @@ class ApiServerApp extends StatelessWidget {
       darkTheme: darkTheme,
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
-      home: Text("API Servidor Local"),
+      home: HomePage(),
     );
   }
 }
