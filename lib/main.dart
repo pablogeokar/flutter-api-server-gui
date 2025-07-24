@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'api_server_app.dart';
 import 'package:window_manager/window_manager.dart';
+import 'services/tray_service.dart';
 import 'dart:io';
 
+class AppWindowListener extends WindowListener {
+  @override
+  Future<void> onWindowClose() async {
+    await TrayService.instance.hideToTray();
+  }
+}
+
 void main() async {
-  /**
-   * significa garantir que a ligação entre o Flutter e o engine (motor de renderização) 
-   * esteja pronta antes de executar qualquer código que dependa dela. Ele é geralmente 
-   * usado no início da função main(), especialmente quando você precisa fazer alguma 
-   * inicialização assíncrona ou trabalhar com plugins antes de rodar o runApp().
-   * 
-   * Sem essa linha, você pode encontrar erros como:
-   * 
-   * "Binding has not been initialized."
-   */
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize window manager for desktop
@@ -25,7 +23,7 @@ void main() async {
       minimumSize: Size(800, 600),
       center: true,
       backgroundColor: Colors.transparent,
-      skipTaskbar: false,
+      skipTaskbar: true,
       titleBarStyle: TitleBarStyle.normal,
       title: 'Servidor de API',
     );
@@ -34,7 +32,14 @@ void main() async {
       await windowManager.show();
       await windowManager.focus();
     });
+
+    // Initialize tray service
+    await TrayService.instance.initialize();
+
+    // Configure window to minimize to tray when closed
+    windowManager.setPreventClose(true);
+    windowManager.addListener(AppWindowListener());
   }
 
-  runApp(ApiServerApp());
+  runApp(const ApiServerApp());
 }
